@@ -1,5 +1,7 @@
 import React from "react";
 
+import "react-native-gesture-handler";
+
 import { View } from "react-native";
 import AppLoading from "expo-app-loading";
 import { StatusBar } from "expo-status-bar";
@@ -10,7 +12,7 @@ import {
   Inter_500Medium,
 } from "@expo-google-fonts/inter";
 
-import { Widget } from "./src/components/Widget";
+import Widget from "./src/components/Widget";
 
 import { theme } from "./src/theme";
 
