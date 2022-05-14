@@ -53,7 +53,7 @@ const Widget: React.FC = () => {
         handleIndicatorStyle={styles.indicator}
       >
         {feedbackSent ? (
-          <Success />
+          <Success onSendAnotherFeedback={handleRestartFeedback} />
         ) : (
           <>
             {feedbackType ? (

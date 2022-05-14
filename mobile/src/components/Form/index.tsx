@@ -10,12 +10,15 @@ import {
 
 import { ArrowLeft } from "phosphor-react-native";
 import { captureScreen } from "react-native-view-shot";
+import * as FileSystem from "expo-file-system";
 
 import { feedbackTypes } from "../../utils/feedbackTypes";
 
 import { Button } from "../Button";
 import { FeedbackType } from "../Widget";
 import { ScreenshotButton } from "../ScreenshotButton";
+
+import { api } from "../../services/api";
 
 import { styles } from "./styles";
 import { theme } from "../../theme";
@@ -33,12 +36,13 @@ export const Form: React.FC<FormProps> = ({
 }) => {
   const [isSendingFeeback, setIsSendingFeedback] = useState(false);
   const [screenshot, setScreenshot] = useState<string | null>(null);
+  const [comment, setComment] = useState("");
 
   const feedbackInfo = feedbackTypes[feedbackType];
 
   const handleScreenshot = () => {
     captureScreen({
-      format: "jpg",
+      format: "png",
       quality: 0.8,
     })
       .then((uri) => {
@@ -56,7 +60,18 @@ export const Form: React.FC<FormProps> = ({
 
     setIsSendingFeedback(true);
 
+    const screenshotBse64 =
+      screenshot &&
+      (await FileSystem.readAsStringAsync(screenshot, { encoding: "base64" }));
+
     try {
+      await api.post("/feedbacks", {
+        type: feedbackType,
+        screenshot: `data:image/png;base64,${screenshotBse64}`,
+        comment,
+      });
+
+      onFeedbackSent();
     } catch (error) {
       console.log(error);
     } finally {
@@ -86,6 +101,7 @@ export const Form: React.FC<FormProps> = ({
         style={styles.input}
         placeholder="Algo não está funcionando bem? Queremos corrigir. Conte com detalhes o que está acontecendo."
         placeholderTextColor={theme.colors.text_secondary}
+        onChangeText={setComment}
       />
 
       <View style={styles.footer}>
